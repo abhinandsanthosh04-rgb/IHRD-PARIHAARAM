@@ -33,7 +33,6 @@
 <img width="1287" height="892" alt="Screenshot 2026-09-12 223643" src="https://github.com/user-attachments/assets/50cdae50-088c-4d1b-96db-eb6f4bcd21a3" />
 <img width="1901" height="963" alt="image" src="https://github.com/user-attachments/assets/99efe340-003c-43d8-8506-933d6ca570ad" />
 <img width="1900" height="943" alt="Screenshot 2026-09-12 223906" src="https://github.com/user-attachments/assets/6ea15c3e-4422-4dff-b9c2-cfa7ea02f000" />
-<img width="1282" height="890" alt="Screenshot 2026-09-12 224107" src="https://github.com/user-attachments/assets/de479a78-81fe-4d3b-b247-2a2b3b33fe04" />
 
 
 
@@ -48,6 +47,8 @@
 
 ### 🧑‍💼 Admin Dashboard
 <img width="1285" height="892" alt="Screenshot 2026-09-12 223552" src="https://github.com/user-attachments/assets/37012ee5-e018-4266-8ee9-db1820df628f" />
+<img width="1282" height="890" alt="Screenshot 2026-09-12 224107" src="https://github.com/user-attachments/assets/de479a78-81fe-4d3b-b247-2a2b3b33fe04" />
+
 
 ---
 
