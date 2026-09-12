@@ -126,7 +126,8 @@ export default function ComplaintsPage() {
             </div>
             {hasFilters && (
               <button className="btn btn-ghost btn-sm" onClick={clearFilters}>
-                <X size={14} /> Clear
+                <X size={14} />
+                ckjskss
               </button>
             )}
           </div>
@@ -148,7 +149,8 @@ export default function ComplaintsPage() {
                     ))}
                   </select>
                 </div>
-                <div className="form-group">
+                <div className="form-group">gtygshs
+
                   <label className="form-label">College</label>
                   <select
                     className="form-select"
