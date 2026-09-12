@@ -1,3 +1,61 @@
+# 🏛️ IHRD PARIHAARAM
+
+### പരാതിയിൽ നിന്ന് പരിഹാരത്തിലേക്ക് | From Complaint to Resolution
+
+**IHRD PARIHAARAM** is a digital student grievance redressal platform designed for IHRD colleges in Kerala. It allows students to submit complaints, track their status, and view resolutions, while college administrators can manage and resolve complaints efficiently.
+
+---
+
+## ✨ Features
+
+- 📝 Online complaint registration
+- 🆔 Unique complaint ID
+- 🔎 Complaint tracking and history
+- 🏫 College-specific complaint management
+- 🧑‍💼 Admin dashboard
+- 🔄 Complaint status and resolution updates
+- 📊 Resolved & unresolved case statistics
+- 🌐 Malayalam and English support
+
+---
+
+## 🎥 Project Demo
+
+[▶️ Watch Project Demo](YOUR_VIDEO_LINK)
+
+---
+
+## 📸 Screenshots
+
+### 🏠 Home Page
+![Home Page](YOUR_HOME_IMAGE_LINK)
+
+### 👨‍🎓 Student Dashboard
+![Student Dashboard](YOUR_STUDENT_IMAGE_LINK)
+
+### 📝 Complaint Registration
+![Complaint Registration](YOUR_COMPLAINT_IMAGE_LINK)
+
+### 🧑‍💼 Admin Dashboard
+![Admin Dashboard](YOUR_ADMIN_IMAGE_LINK)
+
+---
+
+## 🔄 How It Works
+
+```text
+Student
+   ↓
+Submit Complaint
+   ↓
+Complaint ID Generated
+   ↓
+College Admin Reviews
+   ↓
+Status / Resolution Updated
+   ↓
+Student Tracks Resolution
+
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
