@@ -25,6 +25,7 @@ export default function ReportComplaintPage() {
   const [dragOver, setDragOver] = useState(false);
   const [photos, setPhotos] = useState([]);
   const [errors, setErrors] = useState({});
+  const [submitError, setSubmitError] = useState('');
 
   const [form, setForm] = useState({
     title: '',
@@ -74,15 +75,19 @@ export default function ReportComplaintPage() {
       return;
     }
     setLoading(true);
+    setSubmitError('');
     try {
       const result = await submitComplaint({
         ...form,
         studentId: user?.id || 'ANONYMOUS',
         college: colleges.find(c => c.id === form.collegeId)?.name || '',
+        image: photos[0]?.file,
       });
-      setSubmittedId(result.data.id);
+      setSubmittedId(result.complaintId || result.data?.complaintId);
       setStep(2);
       window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (error) {
+      setSubmitError(error.message || 'Unable to submit complaint. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -145,6 +150,7 @@ export default function ReportComplaintPage() {
         <div className="container">
           <div className="report-grid">
             <form className="report-form" onSubmit={handleSubmit} noValidate>
+              {submitError && <div className="form-error" role="alert" style={{ marginBottom: 16 }}>{submitError}</div>}
               {/* College */}
               <div className="form-section">
                 <div className="form-section-title">01 — College & Category</div>

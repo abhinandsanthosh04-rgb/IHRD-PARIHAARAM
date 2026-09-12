@@ -1,16 +1,19 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { CheckCircle2, Search, Edit, Eye, X, Shield } from 'lucide-react';
 import MainLayout from '../layouts/MainLayout';
 import StatusBadge from '../components/common/StatusBadge';
 import { getCurrentUser } from '../services/auth';
-import { complaints as initialComplaints, STATUS } from '../data/complaints';
+import { STATUS } from '../data/complaints';
+import { fetchAdminComplaints, fetchAdminDashboardStats, updateComplaintStatus } from '../services/api';
 import { formatDate } from '../utils/helpers';
 import './AdminDashboard.css';
 
 export default function AdminDashboard() {
   const user = getCurrentUser();
-  const [complaintList, setComplaintList] = useState(initialComplaints);
+  const [complaintList, setComplaintList] = useState([]);
+  const [dashboardStats, setDashboardStats] = useState(null);
+  const [loadError, setLoadError] = useState('');
   const [search, setSearch] = useState('');
   const [activeTab, setActiveTab] = useState('ALL');
   const [priorityFilter, setPriorityFilter] = useState('ALL');
@@ -18,20 +21,27 @@ export default function AdminDashboard() {
   const [resolutionText, setResolutionText] = useState('');
   const [newStatus, setNewStatus] = useState(STATUS.PROGRESS);
 
-  const collegeId = user?.collegeId || 'cek';
+  const collegeId = String(user?.collegeId || user?.collegeCode || 'cek').toLowerCase();
   const collegeName = user?.college || 'College of Engineering Kallooppara';
 
+  const loadDashboardData = () => Promise.all([fetchAdminComplaints(), fetchAdminDashboardStats()])
+    .then(([complaintsResponse, statsResponse]) => {
+      setComplaintList(complaintsResponse.data);
+      setDashboardStats(statsResponse);
+    })
+    .catch(error => setLoadError(error.message || 'Unable to load complaints from the database.'));
+
+  useEffect(() => { loadDashboardData(); }, []);
+
   // Metrics for this college
-  const stats = useMemo(() => {
-    const list = complaintList.filter(c => c.collegeId === collegeId);
-    return {
-      total: list.length,
-      review: list.filter(c => c.status === STATUS.REVIEW).length,
-      progress: list.filter(c => c.status === STATUS.PROGRESS).length,
-      resolved: list.filter(c => c.status === STATUS.RESOLVED).length,
-      escalated: list.filter(c => c.status === STATUS.ESCALATED).length,
-    };
-  }, [complaintList, collegeId]);
+  const stats = useMemo(() => ({
+    total: dashboardStats?.totalComplaints || 0,
+    review: dashboardStats?.underReview || 0,
+    progress: dashboardStats?.inProgress || 0,
+    resolved: dashboardStats?.resolved || 0,
+    unresolved: dashboardStats?.unresolved || 0,
+    escalated: complaintList.filter(c => c.collegeId === collegeId && c.status === STATUS.ESCALATED).length,
+  }), [dashboardStats, complaintList, collegeId]);
 
   // Filtered list
   const filteredComplaints = useMemo(() => {
@@ -50,42 +60,19 @@ export default function AdminDashboard() {
     });
   }, [complaintList, collegeId, search, activeTab, priorityFilter]);
 
-  const handleUpdateStatus = (e) => {
+  const handleUpdateStatus = async (e) => {
     e.preventDefault();
     if (!selectedComplaint) return;
-
-    setComplaintList(prev =>
-      prev.map(c => {
-        if (c.id === selectedComplaint.id) {
-          const updatedTimeline = [
-            ...c.timeline,
-            {
-              date: new Date().toISOString().split('T')[0],
-              status: newStatus,
-              desc: resolutionText || `Status updated to ${newStatus} by Grievance Cell`,
-            },
-          ];
-
-          return {
-            ...c,
-            status: newStatus,
-            timeline: updatedTimeline,
-            resolution:
-              newStatus === STATUS.RESOLVED
-                ? {
-                    text: resolutionText || 'Issue inspected, repaired and verified operational by facilities team.',
-                    resolvedDate: new Date().toISOString().split('T')[0],
-                    resolvedBy: `${user?.name || 'Grievance Cell'} (${user?.department || 'Administration'})`,
-                  }
-                : c.resolution,
-          };
-        }
-        return c;
-      })
-    );
-
-    setSelectedComplaint(null);
-    setResolutionText('');
+    setLoadError('');
+    try {
+      const response = await updateComplaintStatus(selectedComplaint.id, newStatus, resolutionText);
+      setComplaintList(prev => prev.map(c => c.id === response.data.id ? response.data : c));
+      setSelectedComplaint(null);
+      setResolutionText('');
+      await loadDashboardData();
+    } catch (error) {
+      setLoadError(error.message || 'Unable to save the status update.');
+    }
   };
 
   return (
@@ -134,6 +121,10 @@ export default function AdminDashboard() {
                 <span className="admin-stat-label">Resolved</span>
               </div>
               <div className="admin-stat-card">
+                <span className="admin-stat-num" style={{ color: '#FCD34D' }}>{stats.unresolved}</span>
+                <span className="admin-stat-label">Unresolved</span>
+              </div>
+              <div className="admin-stat-card">
                 <span className="admin-stat-num" style={{ color: '#F87171' }}>{stats.escalated}</span>
                 <span className="admin-stat-label">Escalated to HQ</span>
               </div>
@@ -145,6 +136,7 @@ export default function AdminDashboard() {
         <section className="container section">
           {/* Controls Bar */}
           <div className="admin-controls">
+            {loadError && <div className="form-error" role="alert">{loadError}</div>}
             <div className="admin-tabs">
               <button
                 className={`tab ${activeTab === 'ALL' ? 'active' : ''}`}

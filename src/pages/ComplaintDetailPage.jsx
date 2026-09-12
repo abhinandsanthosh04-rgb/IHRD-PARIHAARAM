@@ -1,8 +1,10 @@
+import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, MapPin, Calendar, Camera, CheckCircle2, Clock, User, Building2, Tag } from 'lucide-react';
 import MainLayout from '../layouts/MainLayout';
 import StatusBadge from '../components/common/StatusBadge';
 import { getComplaintById, getComplaintPhotos, categoryResolvedPhotos } from '../data/complaints';
+import { fetchComplaintById } from '../services/api';
 import { getCategoryById } from '../data/categories';
 import { formatDate, getRatingStars } from '../utils/helpers';
 import './ComplaintDetailPage.css';
@@ -16,7 +18,28 @@ function getStepIndex(status) {
 
 export default function ComplaintDetailPage() {
   const { id } = useParams();
-  const complaint = getComplaintById(id);
+  const [complaint, setComplaint] = useState(() => getComplaintById(id));
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let active = true;
+    setComplaint(getComplaintById(id));
+    fetchComplaintById(id)
+      .then(({ data }) => { if (active) setComplaint(data); })
+      .catch(() => {})
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, [id]);
+
+  if (loading && !complaint) {
+    return (
+      <MainLayout>
+        <div className="container" style={{ paddingTop: 120, paddingBottom: 80 }}>
+          <div className="empty-state"><h2 className="text-h2">Loading complaint...</h2></div>
+        </div>
+      </MainLayout>
+    );
+  }
 
   if (!complaint) {
     return (

@@ -1,15 +1,25 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Plus, Eye, MessageSquare, CheckCircle2, Clock, AlertCircle, Bell } from 'lucide-react';
 import MainLayout from '../layouts/MainLayout';
 import StatusBadge from '../components/common/StatusBadge';
 import { getCurrentUser } from '../services/auth';
-import { complaints } from '../data/complaints';
+import { fetchStudentComplaints } from '../services/api';
 import { formatDate } from '../utils/helpers';
 import './StudentDashboard.css';
 
 export default function StudentDashboard() {
   const user = getCurrentUser();
-  const studentComplaints = complaints.filter(c => c.collegeId === user?.collegeId).slice(0, 12);
+  const [studentComplaints, setStudentComplaints] = useState([]);
+  const [loadError, setLoadError] = useState('');
+
+  useEffect(() => {
+    let active = true;
+    fetchStudentComplaints()
+      .then(({ data }) => { if (active) setStudentComplaints(data); })
+      .catch(error => { if (active) setLoadError(error.message || 'Unable to load complaint history.'); });
+    return () => { active = false; };
+  }, []);
   
   const myComplaints = studentComplaints.slice(0, 5); // simulate student's own
   const stats = {
@@ -105,6 +115,8 @@ export default function StudentDashboard() {
                     </tr>
                   </thead>
                   <tbody>
+                    {loadError && <tr><td colSpan="6" className="form-error">{loadError}</td></tr>}
+                    {!loadError && myComplaints.length === 0 && <tr><td colSpan="6">No complaints submitted yet.</td></tr>}
                     {myComplaints.map(c => (
                       <tr key={c.id}>
                         <td>
