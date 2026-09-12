@@ -50,10 +50,6 @@ If you are developing a production application, we recommend using TypeScript wi
 <img width="1901" height="963" alt="image" src="https://github.com/user-attachments/assets/99efe340-003c-43d8-8506-933d6ca570ad" />
 <img width="1900" height="943" alt="Screenshot 2026-09-12 223906" src="https://github.com/user-attachments/assets/6ea15c3e-4422-4dff-b9c2-cfa7ea02f000" />
 
-
-
-
-
 ### 👨‍🎓 Student Dashboard
 <img width="1287" height="900" alt="Screenshot 2026-09-12 223409" src="https://github.com/user-attachments/assets/3ea95cb8-b4fc-4916-85f2-3e9781938fc5" />
 
